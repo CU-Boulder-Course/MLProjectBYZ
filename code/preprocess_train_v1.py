@@ -16,7 +16,7 @@ stemmer = WordNetLemmatizer()
 
 d = defaultdict(dict)
 
-for row in DictReader(open('../sci_train.csv')):
+for row in DictReader(open('../original_data/sci_train.csv')):
 	words = []
 	raw = row['question'].lower()
 	sent = ''.join(ch for ch in raw if ch not in punct).split()
@@ -39,4 +39,4 @@ for row in DictReader(open('../sci_train.csv')):
 	# o.writerow({'id':row['id'], 'words': words, 'answer':answer})
 
 
-json.dump(d, open('../post_train.json', 'w'))
+json.dump(d, open('../data/post_train_v1.json', 'w'))

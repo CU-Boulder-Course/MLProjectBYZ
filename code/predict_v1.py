@@ -5,12 +5,12 @@ from csv import DictWriter
 
 
 if __name__ == '__main__':
-    with open('../trained_coef_sr.json') as data_file:    
+    with open('../data/trained_coef_v1.json') as data_file:    
         trained_coef_o = json.load(data_file)
     #print dict_o['expands']['Femur']
         
     ##load test data
-    with open('../post_test_sr.json') as test_data:
+    with open('../data/post_test_v1.json') as test_data:
         test_o= json.load(test_data)
         
     test_score_o= defaultdict(lambda:defaultdict(int))
@@ -55,7 +55,7 @@ if __name__ == '__main__':
         test_score_o[d]['answer']= max(dict_temp.iteritems(), key=operator.itemgetter(1))[0]
 
 
-    o = DictWriter(open("../predictions.csv", 'wb'), ["id",  "correctAnswer"])
+    o = DictWriter(open("../data/predictions_v1.csv", 'wb'), ["id",  "correctAnswer"])
     o.writeheader()
     for d in test_score_o.keys():
         d = {'id': d, 'correctAnswer': test_score_o[d]['answer']}
