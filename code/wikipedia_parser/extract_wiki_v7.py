@@ -35,6 +35,7 @@ if __name__ == "__main__":
     o.writeheader()
     
     questions= []
+    print "size of AnswerSet", len(AnswerSet)
     
     for i in xrange(len(AnswerSet)):
         print i
@@ -49,7 +50,7 @@ if __name__ == "__main__":
             page = wikipedia.page(title=de.options[0], pageid=None, auto_suggest=False)            
             
         question = ' '.join(str(page.content.encode('utf-8')).split('\n')[0:3])
-        print question        
+#        print question        
         questions.append(question)
     
     for i in xrange(len(AnswerSet)):
