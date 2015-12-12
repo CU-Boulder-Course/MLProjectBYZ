@@ -21,14 +21,14 @@ def tokenize_stem(vectorizer, s):
 #    stemmer=PorterStemmer()
 #    res_t = " ".join([ stemmer.stem(kw) for kw in rs])
 
-    wordnet_lemmatizer=WordNetLemmatizer()
-    res_t = " ".join([ wordnet_lemmatizer.lemmatize(kw) for kw in rs])
+#    wordnet_lemmatizer=WordNetLemmatizer()
+#    res_t = " ".join([ wordnet_lemmatizer.lemmatize(kw) for kw in rs])
 
 #    lancaster_stemmer = LancasterStemmer()
 #    res_t = " ".join([ lancaster_stemmer.stem(kw) for kw in rs])
 
-#    snowball_stemmer = SnowballStemmer('english')
-#    res_t = " ".join([ snowball_stemmer.stem(kw) for kw in rs])        
+    snowball_stemmer = SnowballStemmer('english')
+    res_t = " ".join([ snowball_stemmer.stem(kw) for kw in rs])        
     return res_t
 
 
