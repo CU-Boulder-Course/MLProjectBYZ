@@ -1,4 +1,4 @@
-from csv import DictReader
+from csv import DictReader, DictWriter
 from collections import defaultdict
 from sklearn.feature_extraction.text import TfidfVectorizer
 from random import sample
@@ -43,32 +43,30 @@ def get_external_data(filename):
 
     return external_d
 
-
-#get cross_validation
-#train data and test are in different format
-def get_cross_validation(filename, n_data, percentage):
-    test_sample = sample(range(0, n_data), int(percentage*n_data) )
-    counts = 0
-    #1D dict and 2D dict
-    train = defaultdict(list); test = defaultdict(dict)
+def get_train_data(filename):
+    #1D dict
+    train = defaultdict(list);
     for row in DictReader(open(filename)):
-        if counts in test_sample:
-            test[row['id']]['answerA'] = row['answerA']
-            test[row['id']]['answerB'] = row['answerB']
-            test[row['id']]['answerC'] = row['answerC']
-            test[row['id']]['answerD'] = row['answerD']
-            test[row['id']]['question'] = row['question']
-            test[row['id']]['correctAnswer'] = row['correctAnswer']
-        else:
-            train[row['answer'+str(row['correctAnswer'])]] += [row['question']]
-        
-        counts += 1
+        train[row['answer'+str(row['correctAnswer'])]] += [row['question']]
     
     #might have multiple list, join them to a sentence
     for key in train.keys():
         train[key] = [' '.join(train[key])]
 
-    return train, test
+    return train
+
+def get_test_data_from_xh(filename):
+    test = defaultdict(dict)
+    for row in DictReader(open(filename)):
+        if row['correctAnswer']!='E':
+            test[row['id']]['answerA'] = row['answerA']
+            test[row['id']]['answerB'] = row['answerB']
+            test[row['id']]['answerC'] = row['answerC']
+            test[row['id']]['answerD'] = row['answerD']
+            test[row['id']]['correctAnswer'] = row['correctAnswer']
+            test[row['id']]['question'] = row['question']
+    return test
+
     
 #calculate weight from a list of document
 def calculate_weight(document):
@@ -85,35 +83,30 @@ def calculate_weight(document):
     return weight
      
 if __name__ == "__main__":
-    vectorizer = CountVectorizer(token_pattern=u'(?u)\\b\\w\\w+\\b', max_features=None)    
+    vectorizer = CountVectorizer(token_pattern=u'(?u)\\b\\w\\w+\\b', max_features=None)     
     
-    n_data = 5441; percentage = 0.1
-    train, test = get_cross_validation('../original_data/sci_train.csv', n_data, percentage)
+    train = get_train_data('../original_data/sci_train.csv')
+    test = get_test_data_from_xh('../data/sci_test_withanswers.csv')
     
-#    external_data1 = get_external_data('../data/wiki.csv')
+   
     external_data3 = get_external_data('../data/wiki_v6_1.csv')
-    
 #    external_data_xz = get_external_data('../data/wikitrainxz.csv')
-    
-#    for key in external_data1:
-#        train[key] += [external_data1[key].decode('utf-8')]
-#        train[key] = [' '.join(train[key])]
     
     for key in external_data3:
         train[key] += [external_data3[key].decode('utf-8')]
-        train[key] = [' '.join(train[key])]
-
+        train[key] = [' '.join(train[key])]  
+        
 #    for key in external_data_xz:
 #        train[key] += [external_data_xz[key].decode('latin-1')]
-#        train[key] = [' '.join(train[key])]
-    
-#    #tokenize
-#    for key in train:
-#        train[key] = [tokenize_stem(vectorizer, ' '.join(train[key]))]
+#        train[key] = [' '.join(train[key])]       
 
     correct_predict = 0
-    threshold_counter = 0
-    len_counter = 0
+#    fileHandler = open("../data/predictions_v4.csv", 'wb')
+#    o = DictWriter(fileHandler, ["id",  "correctAnswer"])
+#    o.writeheader()
+    
+    
+    correct_counter = 0    
     for key in test.keys():
         documents = []
         answer = []
@@ -131,32 +124,19 @@ if __name__ == "__main__":
         
         #calculate weight        
         weight = calculate_weight(documents)
-#        print weight
-
-        if(max(weight) < 0.01):
-            threshold_counter += 1
+#        print weight        
         
-        pred = answer[weight.argsort()[-1]][-1]
-
-        if pred == test[key]['correctAnswer']:
-            correct_predict += 1
-#        else:
-#            print 'answerA', test[key]['answerA']
-#            print 'answerB', test[key]['answerB']
-#            print 'answerC', test[key]['answerC']
-#            print 'answerD', test[key]['answerD']
-#            print 'correctAnswer', test[key]['answer'+test[key]['correctAnswer']]
-#            print 'pred', test[key]['answer'+pred]
-#            print 'weight', weight
+        prediction = answer[weight.argsort()[-1]][-1]
+        
+        if prediction == test[key]['correctAnswer']:
+            correct_counter +=1
             
-        if(len(weight)<4):
-            len_counter += 1
-    
-    print float(correct_predict)/float(len(test.keys()))
-    print float(threshold_counter)/float(len(test.keys()))
-    print float(len_counter)/float(len(test.keys()))
-    
-#    print tokenize_stem(vectorizer, "statistical mechanics statistical statistical statistical")
+    print "accuracy:\t", float(correct_counter)/float(len(test.keys()))
+   
+#        d = {'id': key, 'correctAnswer': prediction}
+#        o.writerow(d) 
+#    
+#    fileHandler.close()
 
 
 

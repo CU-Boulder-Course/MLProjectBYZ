@@ -88,7 +88,7 @@ if __name__ == "__main__":
     train = get_train_data('../original_data/sci_train.csv')
     test = get_test_data_from_xh('../data/sci_test_withanswers.csv')
     
-    external_data3 = get_external_data('../data/wiki_v3_1.csv')
+    external_data3 = get_external_data('../data/wiki_v6_1.csv')
     
     for key in external_data3:
         train[key] += [external_data3[key].decode('utf-8')]
