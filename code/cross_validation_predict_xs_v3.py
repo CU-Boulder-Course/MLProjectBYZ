@@ -6,9 +6,9 @@ from random import sample
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 from nltk.stem.porter import PorterStemmer
-#from nltk.stem.wordnet import WordNetLemmatizer
-#from nltk.stem.lancaster import LancasterStemmer
-#from nltk.stem import SnowballStemmer
+from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.stem.lancaster import LancasterStemmer
+from nltk.stem import SnowballStemmer
 
 def tokenize_stem(vectorizer, s):
 #    vectorizer = CountVectorizer(token_pattern=u'(?u)\\b\\w\\w+\\b', max_features=None)
@@ -16,17 +16,19 @@ def tokenize_stem(vectorizer, s):
     str1= tokenizer(s)
     rs= [ss for ss in str1 if ss not in stopwords.words('english')]
     
-    res_t = ' '.join(rs)
+#    res_t = ' '.join(rs)
     
 #    stemmer=PorterStemmer()
 #    res_t = " ".join([ stemmer.stem(kw) for kw in rs])
 
-#        wordnet_lemmatizer=WordNetLemmatizer()
-#        res_t = " ".join([ wordnet_lemmatizer.lemmatize(kw) for kw in rs])
-#        lancaster_stemmer = LancasterStemmer()
-#        res_t = " ".join([ lancaster_stemmer.stem(kw) for kw in rs])
-#        snowball_stemmer = SnowballStemmer('english')
-#        res_t = " ".join([ snowball_stemmer.stem(kw) for kw in rs])        
+    wordnet_lemmatizer=WordNetLemmatizer()
+    res_t = " ".join([ wordnet_lemmatizer.lemmatize(kw) for kw in rs])
+
+#    lancaster_stemmer = LancasterStemmer()
+#    res_t = " ".join([ lancaster_stemmer.stem(kw) for kw in rs])
+
+#    snowball_stemmer = SnowballStemmer('english')
+#    res_t = " ".join([ snowball_stemmer.stem(kw) for kw in rs])        
     return res_t
 
 
@@ -89,7 +91,7 @@ if __name__ == "__main__":
     train, test = get_cross_validation('../original_data/sci_train.csv', n_data, percentage)
     
 #    external_data1 = get_external_data('../data/wiki.csv')
-    external_data3 = get_external_data('../data/wiki_v3.csv')
+    external_data3 = get_external_data('../data/wiki_v3_1.csv')
     
 #    external_data_xz = get_external_data('../data/wikitrainxz.csv')
     
@@ -129,7 +131,7 @@ if __name__ == "__main__":
         
         #calculate weight        
         weight = calculate_weight(documents)
-#        print weight
+        print weight
 
         if(max(weight) < 0.01):
             threshold_counter += 1
