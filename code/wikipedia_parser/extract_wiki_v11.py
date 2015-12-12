@@ -30,7 +30,7 @@ def get_answer_words(train_filename, test_filename):
 if __name__ == "__main__":
     AnswerSet = get_answer_words('../../original_data/sci_train.csv', '../../original_data/sci_test.csv')
 
-    fileHandler = open("../../data/wiki_v10_1.csv", 'wb')
+    fileHandler = open("../../data/wiki_v11_1.csv", 'wb')
     o = DictWriter(fileHandler, ["answer",  "question"])
     o.writeheader()
     
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         search = wikipedia.search(answer)
 #        print "search[0]", search[0]
         question = ''
-        for s in search[0:2]:
+        for s in search[0:3]:
             print s
             try:
                 page = wikipedia.page(title=s, pageid=None, auto_suggest=False)
